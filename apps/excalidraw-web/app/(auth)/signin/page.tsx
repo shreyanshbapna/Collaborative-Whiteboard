@@ -27,7 +27,7 @@ export default function App() {
     });
     if (response.data.token) {
       localStorage.setItem("token", response.data.token);
-      redirect("/create-app")
+      redirect("/dashboard")
     } else {
       alert(response.data.message);
     }

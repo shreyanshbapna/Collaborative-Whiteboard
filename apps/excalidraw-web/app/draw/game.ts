@@ -85,6 +85,7 @@ export class Game {
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
     this.existingShapes.forEach((shape) => {
+      
       // set stroke(bountry of shape to white color)
       this.ctx.strokeStyle = "rgba(255, 255, 255)";
 

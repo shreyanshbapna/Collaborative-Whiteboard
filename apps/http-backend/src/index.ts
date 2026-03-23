@@ -101,7 +101,7 @@ app.post("/signin", async (req: Request, res: Response) => {
       {
         id: user.id,
       },
-      JWT_SECRET!
+      JWT_SECRET!,
     );
 
     return res.json({
@@ -134,10 +134,16 @@ app.post("/create-room", middleware, async (req: Request, res: Response) => {
       data: {
         slug,
         adminId,
+        user: {
+          connect: {
+            id: adminId,
+          },
+        },
       },
     });
 
     return res.json({
+      slug,
       roomId: response.id,
       message: "Successfully Create the room",
     });
@@ -184,4 +190,77 @@ app.get("/room/:slug", async (req: Request, res: Response) => {
     roomId: room?.id,
   });
 });
+
+app.get("/user-room", middleware, async (req: Request, res: Response) => {
+  // @ts-ignore
+  const userId = req.userId;
+
+  const userWithRooms: {
+    userRoom: {
+      slug: string;
+    }[];
+  } | null = await prismaClient.user.findUnique({
+    where: {
+      id: userId,
+    },
+    include: {
+      userRoom: true,
+    },
+  });
+
+  return res.json({
+    rooms: userWithRooms?.userRoom,
+  });
+});
+
+app.post("/join-room", middleware, async (req: Request, res: Response) => {
+  const { name } = req.body;
+
+  const room = await prismaClient.room.findFirst({
+    where: {
+      slug: name,
+    },
+  });
+
+  if (!room) {
+    return res.json({
+      message: "Room not found!!",
+    });
+  }
+
+  const roomId = room.id;
+  // @ts-ignore
+  const userId = req.userId;
+
+  try {
+    const response = await prismaClient.room.update({
+      where: {
+        id: roomId,
+      },
+      data: {
+        user: {
+          connect: {
+            id: userId,
+          },
+        },
+      },
+    });
+
+    if (!response) {
+      return res.json({
+        message: "Room not found!!",
+      });
+    }
+
+    return res.json({
+      message: "Successfully joined the room",
+    });
+  } catch (e) {
+    return res.json({
+      message: "Something went wrong!!",
+      error: e,
+    });
+  }
+});
+
 app.listen(3001);
