@@ -1,6 +1,5 @@
 {
   "buildCommand": "pnpm turbo run build --filter=excalidraw-web",
   "outputDirectory": "apps/excalidraw-web/.next",
-  "installCommand": "pnpm install",
-  "framework": "nextjs"
+  "installCommand": "pnpm install"
 }
