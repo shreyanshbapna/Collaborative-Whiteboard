@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import cors from "cors";
 
-import { JWT_SECRET } from "@repo/secret/config";
+
 import { middleware } from "./middleware";
 import {
   createUserSchema,
@@ -54,11 +54,13 @@ app.post("/signup", async (req: Request, res: Response) => {
       response,
       message: "Signup successfully!!",
     });
-  } catch (e) {
-    return res.json({
-      message: "Something went wrong!!",
-      error: e,
-    });
+  } catch (e: any) {
+    console.log("ERROR CODE:", e.code)
+    console.log("ERROR MESSAGE:", e.message)
+    return res.json({ 
+      message: "Something went wrong!!", 
+      error: e.message  // send message string not object
+    })
   }
 });
 
@@ -73,6 +75,10 @@ app.post("/signin", async (req: Request, res: Response) => {
   }
 
   const { email, password } = req.body;
+
+  console.log("email", email);
+  console.log("password", password);
+    console.log("JWT secret:", process.env.JWT_SECRET);
 
   try {
     // check the user is registerd or not with this email
@@ -95,13 +101,14 @@ app.post("/signin", async (req: Request, res: Response) => {
       return res.json({
         message: "Invalid Credentail!!",
       });
-    }
+    } 
+    
 
     const token = jwt.sign(
       {
         id: user.id,
       },
-      JWT_SECRET!,
+      process.env.JWT_SECRET!,
     );
 
     return res.json({
@@ -148,6 +155,7 @@ app.post("/create-room", middleware, async (req: Request, res: Response) => {
       message: "Successfully Create the room",
     });
   } catch (e) {
+       console.log(e);
     return res.json({
       message: "Something went wrong!!",
       error: e,

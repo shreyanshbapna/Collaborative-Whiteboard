@@ -1,0 +1,82 @@
+version: "3.9"
+
+networks:
+  excalidraw_net:
+    driver: bridge
+
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=excalidraw
+    networks:
+      - excalidraw_net
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  migrate:
+    build:
+      context: .
+      dockerfile: apps/http-backend/Dockerfile
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+    command: pnpm --filter @repo/db migrate
+    depends_on:
+      - postgres
+    networks:
+      - excalidraw_net
+
+  http-backend:
+    build:
+      context: .
+      dockerfile: apps/http-backend/Dockerfile
+    restart: always
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - JWT_SECRET=${JWT_SECRET}
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    networks:
+      - excalidraw_net
+    ports:
+      - "3001:3001"
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+
+  ws-backend:
+    build:
+      context: .
+      dockerfile: apps/ws-backend/Dockerfile
+    restart: always
+    environment:
+      - JWT_SECRET=${JWT_SECRET}
+      - DATABASE_URL=${DATABASE_URL}
+    networks:
+      - excalidraw_net
+    ports:
+      - "8080:8080"
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+
+  excalidraw-web:
+    build:
+      context: .
+      dockerfile: apps/excalidraw-web/Dockerfile
+    restart: always
+    depends_on:
+      - http-backend
+      - ws-backend
+    networks:
+      - excalidraw_net
+    ports:
+      - "3000:3000"
+
+volumes:
+  postgres_data:

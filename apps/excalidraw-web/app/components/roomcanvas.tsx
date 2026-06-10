@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { WS_URL } from "@repo/secret/config";
+
 import { Canvas } from "./canvas";
 
 export function RoomCanvas({
@@ -17,7 +17,7 @@ export function RoomCanvas({
     if (!token) {
       return;
     }
-    const websocket = new WebSocket(`${WS_URL}/?token=${token}`);
+    const websocket = new WebSocket(`${process.env.NEXT_PUBLIC_WS_URL}/?token=${token}`);
 
     websocket.onopen = () => {
       setSocket(websocket);

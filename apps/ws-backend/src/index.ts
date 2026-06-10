@@ -1,4 +1,3 @@
-import { JWT_SECRET } from "@repo/secret/config";
 import { WebSocket, WebSocketServer } from "ws";
 import jwt from "jsonwebtoken";
 import { prismaClient } from "@repo/db/client";
@@ -7,7 +6,7 @@ const wss = new WebSocketServer({ port: 8080 });
 
 const checkUser = (token: string): string | null => {
   try {
-    const decode = jwt.verify(token, JWT_SECRET);
+    const decode = jwt.verify(token, process.env.JWT_SECRET!);
 
     // know that it has to be jwtPlayload/object but if it string then close the ws connection because we load using some object
     if (typeof decode == "string") {

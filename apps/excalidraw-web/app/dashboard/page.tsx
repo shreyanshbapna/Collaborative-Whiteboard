@@ -1,5 +1,4 @@
 "use client";
-import { BACKEND_URL } from "@repo/secret/config";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { Plus, X, Search, Layout, ArrowRight, Loader2 } from "lucide-react";
@@ -57,7 +56,7 @@ export default function App() {
     try {
       setIsCreating(true);
       const response = await axios.post(
-        `${BACKEND_URL}/create-room`,
+        `${process.env.NEXT_PUBLIC_HTTP_URL}/create-room`,
         { name: slug },
         { headers: { token } }
       );
@@ -85,7 +84,7 @@ export default function App() {
       return;
     }
     axios
-      .get(`${BACKEND_URL}/user-room`, { headers: { token } })
+      .get(`${process.env.NEXT_PUBLIC_HTTP_URL}/user-room`, { headers: { token } })
       .then((response) => setRecentRooms(response.data.rooms))
       .catch((err) => console.error("Error fetching recent rooms:", err));
   }, []);

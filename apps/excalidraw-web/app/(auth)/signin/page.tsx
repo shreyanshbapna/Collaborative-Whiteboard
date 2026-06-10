@@ -1,5 +1,4 @@
 "use client";
-import { BACKEND_URL } from "@repo/secret/config";
 import axios from "axios";
 import Link from "next/link";
 import { redirect, useRouter } from "next/navigation";
@@ -21,7 +20,7 @@ export default function App() {
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     const { email, password } = data;
-    const response = await axios.post(`${BACKEND_URL}/signin`, {
+    const response = await axios.post(`${process.env.NEXT_PUBLIC_HTTP_URL}/signin`, {
       email,
       password,
     });

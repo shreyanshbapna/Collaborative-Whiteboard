@@ -3,11 +3,13 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+ "scripts": {
+    "build": "tsc -b",
+    "generate": "prisma generate",
+    "migrate": "prisma migrate deploy"
   },
   "exports": {
-    "./client": "./src/client.ts"
+    "./client": "./dist/client.js"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
@@ -18,7 +20,6 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "module",
   "dependencies": {
     "@prisma/adapter-pg": "^7.1.0",
     "@prisma/client": "^7.8.0",

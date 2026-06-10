@@ -7,10 +7,10 @@
     "@repo/typescript-config": "workspace:*"
   },
   "exports": {
-    "./test": "./src/test.ts"
+    "./test": "./dist/test.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc -b"
   },
   "keywords": [],
   "author": "",
