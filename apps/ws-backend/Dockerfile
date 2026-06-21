@@ -7,7 +7,7 @@ COPY . .
 RUN pnpm install
 RUN DATABASE_URL=postgresql://placeholder:placeholder@localhost:5432/placeholder pnpm --filter @repo/db generate
 
-RUN pnpm --filter excalidraw-web build
+RUN pnpm build
 
 EXPOSE 3000
 CMD ["pnpm", "--filter", "ws-backend", "start"]
